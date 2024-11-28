@@ -34,7 +34,9 @@ class ProjectController extends Controller
 
     public function detail($id)
     {
-        $data = ProjectModel::with('columns.cards')->findOrFail($id);
+        $data = ProjectModel::with(['columns.cards' => function($query) {
+            $query->orderBy('position'); // Order cards by position
+        }])->findOrFail($id);
         // return $data;
         return Inertia::render('KanbanDetail',compact('data'));
     }

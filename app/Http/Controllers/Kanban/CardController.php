@@ -33,34 +33,21 @@ class CardController extends Controller
         return response()->json('success', 200);
     }
 
+
     public function updateCardPositions(Request $request)
     {
-        $cards = $request->input('cards');
-        Log::info('Cards data received:', $cards);
+        $updates = $request->input('updates');
 
-        foreach ($cards as $cardData) {
-            Log::info('Updating card:', [
-                'id' => $cardData['id'],
-                'position' => $cardData['position'],
-                'column_id' => $cardData['column_id']
-            ]);
-
-            // Get the current position of the card
-            $currentPosition = DB::table('cards')->where('id', $cardData['id'])->value('position');
-
-            // Increment the position
-            $newPosition = $currentPosition + 1; // You can adjust the increment based on your logic
-
-            // Update the card's position
+        foreach ($updates as $update) {
             DB::table('cards')
-                ->where('id', $cardData['id'])
+                ->where('id', $update['id'])
                 ->update([
-                    'position' => $newPosition,
-                    'column_id' => $cardData['column_id'],
+                    'column_id' => $update['column_id'],
+                    'position' => $update['position'],
                 ]);
         }
 
-        return response()->json(['message' => 'Card positions updated successfully.']);
+        return response()->json(['message' => 'Positions updated successfully!']);
     }
 
     public function updatePositions(Request $request)

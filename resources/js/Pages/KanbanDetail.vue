@@ -4,13 +4,11 @@ import Main from "./Layout/Main.vue";
 import { defineProps, ref, watch } from "vue";
 import { toast } from "vue3-toastify";
 import Draggable from "vuedraggable";
-import { Inertia } from "@inertiajs/inertia";
-import { route } from "ziggy-js";
 
 const props = defineProps({
   data: {
     type: Object,
-    required: true, // Ensure data is always passed
+    required: true,
   },
 });
 
@@ -107,67 +105,30 @@ const deleteColumn = async (id) => {
   }
 };
 
-// Save Card Position
-const columns = ref(props.data.columns);
-const saveCardOrder = async (event, columnId) => {
-  const column = columns.value.find((col) => col.id === columnId);
+const onDragChange = async () => {
+  const updates = [];
 
-  if (column) {
-    const updatedOrder = column.cards.map((card, index) => ({
-      id: card.id,
-      position: index + 1,
-      column_id: column.id,
-    }));
-
-    console.log("Updated Order:", updatedOrder);
-
-    try {
-      const response = await axios.post("/api/cards/update-positions", {
-        cards: updatedOrder,
+  // Loop through each column and gather updates
+  props.data.columns.forEach((column) => {
+    column.cards.forEach((card, index) => {
+      updates.push({
+        id: card.id,
+        column_id: column.id,
+        position: index + 1, // Position is 1-based
       });
-
-      // Log the response to verify success
-      console.log("Response from server:", response);
-
-      if (response.data.message) {
-        console.log("Cards successfully updated.");
-      }
-    } catch (error) {
-      console.error("Error saving card order:", error);
-    }
-  } else {
-    console.error(`Column with ID ${columnId} not found.`);
-  }
-};
-
-const cards = ref(props.data.columns);
-function onChange(e) {
-  let item = e.added || e.moved;
-
-  if (!item) return;
-
-  let index = item.newIndex;
-  let prevCard = cards.value[index - 1];
-  let nextCard = cards.value[index + 1];
-  let card = cards.value[index];
-
-  let position = card.position;
-
-  if (prevCard && nextCard) {
-    position = (prevCard.position + nextCard.position) / 2;
-  } else if (prevCard) {
-    position = prevCard.position + prevCard.position / 2;
-  } else if (nextCard) {
-    position = nextCard.position / 2;
-  }
-
-  Inertia.put(route("cards.move", { card: card.id }), {
-    position: position,
-    cardListId: props.data.columns,
+    });
   });
 
-  console.log(e);
-}
+  // Send the updated positions to the backend
+  try {
+    await axios.post("/api/update-card-positions", { updates });
+    // Handle success (Optional, you can use a toast notification)
+    console.log("Positions updated successfully!");
+  } catch (error) {
+    // Handle error (Optional, you can use a toast notification)
+    console.error("Failed to update positions!", error);
+  }
+};
 
 watch(
   () => props.data.id,
@@ -208,7 +169,7 @@ watch(
           group="cards"
           item-key="id"
           animation="200"
-          @change="onChange"
+          @change="onDragChange"
         >
           <template #item="{ element }">
             <li

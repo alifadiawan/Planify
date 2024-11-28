@@ -36,10 +36,8 @@ Route::delete('/column/delete/{id}', [ColumnController::class, 'delete']);
 
 Route::post('/card/store', [CardController::class, 'store']);
 Route::delete('/card/delete/{id}', [CardController::class, 'delete']);
-Route::post('/cards/update-positions', [CardController::class, 'updateCardPositions']);
-
-// Route::put('/cards/move/{card}', [CardController::class, 'move'])->name('cards.move');
+Route::post('/update-card-positions', [CardController::class, 'updateCardPositions']);
 
 
-Route::post('/api/cards/update-positions', [CardController::class, 'updatePositions']); 
+
 Route::get('/task-statistics', [HomeController::class, 'taskStatistics']);
