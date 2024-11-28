@@ -16,9 +16,10 @@ class AuthController extends Controller
         ];
 
         if (Auth::attempt($data)) {
+            $request->session()->regenerate();
             return response()->json(['message' => 'Authenticated', 'redirect' => '/dashboard'], 200);
         } else {
-            return response()->json(['message' => 'Email / Password don\'t match in our database'], 401);
+            return response()->json(['message' => 'The provided credentials do not match our records.'], 401);
         }
     }
 

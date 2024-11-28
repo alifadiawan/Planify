@@ -1,12 +1,13 @@
 <script setup>
 import Main from "./Layout/Main.vue";
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineProps } from "vue";
 import { toast } from "vue3-toastify";
 
 const projects = ref([""]);
 const project_title = ref("");
 const due_date = ref("");
+const user_id = ref("");
 
 // fetch projects
 const fetchProject = async () => {
@@ -18,11 +19,19 @@ const fetchProject = async () => {
   }
 };
 
+const props = defineProps({
+  userId: {
+    type: Number,
+    required: true,
+  },
+});
+
 const newProject = async () => {
   try {
     const response = await axios.post("/api/project/store", {
       project_title: project_title.value,
       due_date: due_date.value,
+      user_id: props.userId
     });
     toast("Success", {
       theme: "dark",
@@ -74,11 +83,7 @@ onMounted(fetchProject);
           <h2 class="font-bold mb-3 text-gray-300 text-center w-full">
             Priority List
           </h2>
-          <ul class="menu rounded-box w-full">
-            <li><a>Item 1</a></li>
-            <li><a>Item 2</a></li>
-            <li><a>Item 3</a></li>
-          </ul>
+
         </div>
       </div>
     </div>

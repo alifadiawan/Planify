@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\SubTask;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class NotesController extends Controller
 {
-
     public function fetch()
     {
         $task = Task::with('subTask')->get();
@@ -18,7 +18,7 @@ class NotesController extends Controller
 
     public function index()
     {
-        return Inertia::render('Checklist');
+        return Inertia::render('Checklist', ['userId' => Auth::id()]);
     }
 
     public function store(Request $request)
@@ -26,8 +26,8 @@ class NotesController extends Controller
         $data = [
             'title' => $request->title,
             'due_date' => $request->due_date,
+            'user_id' => $request->user_id
         ];
-
         Task::create($data);
 
         return response()->json(['message' => 'success'], 200);

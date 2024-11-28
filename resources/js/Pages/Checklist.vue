@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, defineProps } from "vue";
 import Main from "./Layout/Main.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
@@ -14,6 +14,14 @@ const due_date = ref("");
 const progress = ref("");
 const loading = ref(true);
 const subtask = ref(null);
+const user_id = ref("");
+
+const props = defineProps({
+  userId: {
+    type: Number,
+    required: true,
+  },
+});
 
 const openDialog = () => {
   dialog.value.showModal();
@@ -31,7 +39,8 @@ const openSubTaskDialog = (id) => {
 const newNotes = async () => {
   const response = await axios.post("/api/create-notes", {
     title: title.value,
-    due_date: due_date.value,
+    due_date: due_date.value, 
+    user_id: props.userId
   });
   title.value = "";
   fetchNotes();
@@ -42,6 +51,7 @@ const newSubTask = async () => {
     const response = await axios.post("/api/create-sub-task", {
       task_id: task_id.value,
       tasks_name: tasks_name.value,
+      user_id: props.userId
     });
     fetchNotes();
     toast("Success", {
@@ -54,7 +64,11 @@ const newSubTask = async () => {
     });
     tasks_name.value = "";
   } catch (error) {
-    console.log(error);
+    if (error.response) {
+      console.log("Error data:", error.response.data);
+      console.log("Error status:", error.response.status);
+      console.log("Error headers:", error.response.headers);
+    }
   }
 };
 

@@ -62,30 +62,6 @@ const mapStatusToLabel = (statusCode) => {
 // render chart
 const renderChart = () => {
   const ctx = document.getElementById('statusChart');
-  new Chart(ctx, {
-    type: 'bar', // Bar chart type
-    data: {
-      labels: statusCounts.value.map((status) => mapStatusToLabel(status.status)),
-      datasets: [
-        {
-          label: 'Task Status Counts',
-          data: statusCounts.value.map((status) => status.count), // Status counts
-          backgroundColor: 'rgba(75, 192, 192, 0.2)', // Bar color
-          borderColor: 'rgba(75, 192, 192, 1)', // Bar border color
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true, // Start Y axis from 0
-          type: 'linear', // Explicitly set the scale type
-        },
-      },
-    },
-  });
 
   const ctxPie = document.getElementById('statusPieChart');
   new Chart(ctxPie, {
@@ -129,12 +105,11 @@ onMounted(() => {
     <div class="grid grid-cols-4 gap-3 mt-3">
       <div class="card">
         <div class="stats shadow bg-base-200 rounded-lg flex flex-col">
-          <div class="stat">
+          <div class="stat flex justify-between items-center">
             <div class="stat-title text-lg font-semibold">
               Total Tasks Assigned
             </div>
             <div class="stat-value">{{ totalTask }}</div>
-            <div class="stat-desc px-4">21% more than last month</div>
           </div>
         </div>
       </div>
@@ -149,16 +124,16 @@ onMounted(() => {
       <div class="card">
         <div class="stats shadow bg-base-200 rounded-lg">
           <div class="stat flex items-center justify-between">
-            <div class="stat-title">Total Page Views</div>
-            <div class="stat-value">89,400</div>
+            <div class="stat-title">Project Assigned</div>
+            <div class="stat-value">12</div>
           </div>
         </div>
       </div>
       <div class="card">
         <div class="stats shadow bg-base-200 rounded-lg">
           <div class="stat flex items-center justify-between">
-            <div class="stat-title">Total Page Views</div>
-            <div class="stat-value">89,400</div>
+            <div class="stat-title">Project Task Assigned</div>
+            <div class="stat-value">32</div>
           </div>
         </div>
       </div>
@@ -188,7 +163,7 @@ onMounted(() => {
               <tr v-for="(item, id) in props.project" :key="id" class="hover">
                 <th>{{ item.id }}</th>
                 <td>{{ item.project_title }}</td>
-                <td>Desktop Support Technician</td>
+                <td>{{ item.due_date }}</td>
                 <td>Purple</td>
                 <td>
                   <a href="" class="btn btn-sm btn-outline-primary">Detail</a>

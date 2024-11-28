@@ -114,7 +114,7 @@ const onDragChange = async () => {
       updates.push({
         id: card.id,
         column_id: column.id,
-        position: index + 1, // Position is 1-based
+        position: index + 1,
       });
     });
   });
@@ -122,10 +122,8 @@ const onDragChange = async () => {
   // Send the updated positions to the backend
   try {
     await axios.post("/api/update-card-positions", { updates });
-    // Handle success (Optional, you can use a toast notification)
     console.log("Positions updated successfully!");
   } catch (error) {
-    // Handle error (Optional, you can use a toast notification)
     console.error("Failed to update positions!", error);
   }
 };
@@ -212,14 +210,6 @@ watch(
         >
           New Task
         </button>
-      </div>
-
-      <div class="card bg-base-100 w-80 h-fit shadow-xl p-4 flex-none">
-        <div class="flex justify-between">
-          <h2 class="card-title font-bold mb-3 text-gray-300">Done</h2>
-        </div>
-
-        <!-- Draggable -->
       </div>
 
       <div class="card w-80 flex-none">

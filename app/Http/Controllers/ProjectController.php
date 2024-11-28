@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProjectModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -16,7 +17,7 @@ class ProjectController extends Controller
 
     public function index()
     {
-        return Inertia::render('KanbanBoard');
+        return Inertia::render('KanbanBoard', ['userId' => Auth::id()]);
     }
 
     public function store(Request $request)
@@ -24,7 +25,7 @@ class ProjectController extends Controller
         $data = [
             'project_title' => $request->project_title,
             'due_date' => $request->due_date,
-            // 'user_id' => Auth::user()->id
+            'user_id' => $request->user_id
         ];
 
         ProjectModel::create($data);
@@ -34,10 +35,12 @@ class ProjectController extends Controller
 
     public function detail($id)
     {
-        $data = ProjectModel::with(['columns.cards' => function($query) {
-            $query->orderBy('position'); // Order cards by position
-        }])->findOrFail($id);
-        // return $data;
-        return Inertia::render('KanbanDetail',compact('data'));
+        $data = ProjectModel::with([
+            'columns.cards' => function ($query) {
+                $query->orderBy('position');
+            }
+        ])->findOrFail($id);
+
+        return Inertia::render('KanbanDetail', compact('data'));
     }
 }
