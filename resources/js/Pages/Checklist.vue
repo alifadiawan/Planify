@@ -10,8 +10,10 @@ const dialog = ref(null);
 const tasks = ref([]);
 const task_id = ref(null);
 const tasks_name = ref("");
+const due_date = ref("");
 const progress = ref("");
 const loading = ref(true);
+const subtask = ref(null);
 
 const openDialog = () => {
   dialog.value.showModal();
@@ -23,12 +25,13 @@ const closeDialog = () => {
 
 const openSubTaskDialog = (id) => {
   task_id.value = id;
-  subtask.showModal();
+  subtask.value.showModal();
 };
 
 const newNotes = async () => {
   const response = await axios.post("/api/create-notes", {
     title: title.value,
+    due_date: due_date.value,
   });
   title.value = "";
   fetchNotes();
@@ -105,7 +108,7 @@ const deleteSubTask = async (subtask_id) => {
 const setMinimumLoadingTime = () => {
   setTimeout(() => {
     loading.value = false;
-  }, 1000); 
+  }, 1000);
 };
 
 const calculateProgress = (subtasks) => {
@@ -151,12 +154,41 @@ onMounted(() => {
 
 
 <template>
+  <dialog class="modal" ref="subtask">
+    <div class="modal-box">
+      <form method="dialog">
+        <button
+          @click="closeDialog"
+          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+        >
+          ✕
+        </button>
+      </form>
+      <h3 class="text-lg font-bold mb-3">Add Subtask</h3>
+      <form @submit.prevent="newSubTask" method="post">
+        <input type="hidden" name="task_id" v-model="task_id" />
+        <input
+          type="text"
+          v-model="tasks_name"
+          name="tasks_name"
+          placeholder="Type here"
+          class="input input-bordered w-full"
+        />
+        <button type="submit" class="btn btn-success w-full mt-3">
+          Create !
+        </button>
+      </form>
+    </div>
+  </dialog>
+
   <Main>
     <h1 class="text-2xl font-bold">Goal Tracking</h1>
 
     <div class="flex items-center justify-between gap-3 my-5">
       <h1 class="text-xl font-bold m-0 p-0">Quick Notes</h1>
-      <a onclick="my_modal_3.showModal()" class="btn btn-sm btn-neutral">Add</a>
+      <a onclick="my_modal_3.showModal()" class="btn btn-sm btn-neutral"
+        >Create Task</a
+      >
     </div>
 
     <dialog id="my_modal_3" class="modal" ref="dialog">
@@ -175,9 +207,21 @@ onMounted(() => {
             type="text"
             v-model="title"
             name="title"
-            placeholder="Type here"
+            placeholder="task name"
             class="input input-bordered w-full"
           />
+          <label class="form-control w-full">
+            <div class="label">
+              <span class="label-text">Due Date</span>
+            </div>
+            <input
+              type="date"
+              placeholder="Type here"
+              class="input input-bordered w-full"
+              name="due_date"
+              v-model="due_date"
+            />
+          </label>
           <button type="submit" class="btn btn-success w-full mt-3">
             Create !
           </button>
@@ -207,11 +251,12 @@ onMounted(() => {
           </button>
           <div class="flex flex-row gap-2 items-center justify-between my-2">
             <h2 class="card-title">{{ item.title }}</h2>
-            <a
+            <button
               @click="openSubTaskDialog(item.id)"
               class="btn btn-sm btn-neutral"
-              >Add</a
             >
+              Add
+            </button>
           </div>
 
           <form v-for="subtask in item.sub_task" :key="subtask.id">
@@ -239,9 +284,14 @@ onMounted(() => {
           </form>
         </div>
         <div v-if="item.sub_task.length > 0" class="card-footer px-8 py-4">
-          <span class="label-text-alt"
-            >{{ calculateProgress(item.sub_task) }}%</span
-          >
+          <div class="flex items-center justify-between">
+            <span class="label-text-alt"
+              >{{ calculateProgress(item.sub_task) }}%</span
+            >
+            <span class="text-sm text-end text-red-600">{{
+              item.due_date
+            }}</span>
+          </div>
           <div class="progress-container">
             <div
               class="progress-bar"
@@ -252,33 +302,6 @@ onMounted(() => {
             ></div>
           </div>
         </div>
-
-        <dialog id="subtask" class="modal" ref="dialog">
-          <div class="modal-box">
-            <form method="dialog">
-              <button
-                @click="closeDialog"
-                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              >
-                ✕
-              </button>
-            </form>
-            <h3 class="text-lg font-bold mb-3">Add Subtask</h3>
-            <form @submit.prevent="newSubTask" method="post">
-              <input type="hidden" name="task_id" v-model="task_id" />
-              <input
-                type="text"
-                v-model="tasks_name"
-                name="tasks_name"
-                placeholder="Type here"
-                class="input input-bordered w-full"
-              />
-              <button type="submit" class="btn btn-success w-full mt-3">
-                Create !
-              </button>
-            </form>
-          </div>
-        </dialog>
       </div>
     </div>
   </Main>

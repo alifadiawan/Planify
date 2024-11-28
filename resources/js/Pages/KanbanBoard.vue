@@ -6,6 +6,7 @@ import { toast } from "vue3-toastify";
 
 const projects = ref([""]);
 const project_title = ref("");
+const due_date = ref("");
 
 // fetch projects
 const fetchProject = async () => {
@@ -21,6 +22,7 @@ const newProject = async () => {
   try {
     const response = await axios.post("/api/project/store", {
       project_title: project_title.value,
+      due_date: due_date.value,
     });
     toast("Success", {
       theme: "dark",
@@ -40,7 +42,7 @@ onMounted(fetchProject);
 
 <template>
   <Main>
-    <div class="mb-5 mt-12 flex items-center justify-between w-full">
+    <div class="mb-5 mt-5 flex items-center justify-between w-full">
       <h2 class="text-2xl font-bold">All Projects</h2>
       <button class="btn" onclick="my_modal_3.showModal()">
         Create Project
@@ -60,7 +62,7 @@ onMounted(fetchProject);
               <h2 class="card-title font-bold mb-3 text-gray-300">
                 {{ item.project_title }}
               </h2>
-              <span class="text-sm text-gray-400">{{ item.created_at }}</span>
+              <span class="text-sm text-gray-400">{{ item.due_date }}</span>
             </div>
           </a>
         </div>
@@ -98,6 +100,18 @@ onMounted(fetchProject);
           v-model="project_title"
           class="input w-full"
         />
+        <label class="form-control w-full">
+            <div class="label">
+              <span class="label-text">Due Date</span>
+            </div>
+            <input
+              type="date"
+              placeholder="Type here"
+              class="input input-bordered w-full"
+              name="due_date"
+              v-model="due_date"
+            />
+          </label>
         <button type="submit" class="btn w-full btn-success btn-sm">
           Create New Project
         </button>

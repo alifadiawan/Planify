@@ -1,6 +1,10 @@
+<script setup>
+const userId = window.AuthUser?.id || null;
+</script>
+
 <template>
   <aside
-    class="flex flex-col items-center w-16 min-h-screen py-8 overflow-y-auto bg-white border-r rtl:border-l rtl:border-r-0 dark:bg-gray-900 dark:border-gray-700"
+    class="flex flex-col items-center w-16 min-h-screen py-8 overflow-y-auto bg-white border-r rtl:border-l rtl:border-r-0 dark:bg-base-100 dark:border-gray-700"
   >
     <nav class="flex flex-col flex-1 space-y-6">
       <!-- Logo -->
@@ -89,7 +93,7 @@
      
 
       <a
-        href="#"
+        :href="`/my-profile/${userId}`"
         class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg dark:text-gray-200 dark:bg-gray-800 bg-gray-100"
       >
         <svg
@@ -113,13 +117,6 @@
         </svg>
       </a>
 
-      <a href="#">
-        <img
-          class="object-cover w-8 h-8 rounded-full"
-          src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=4&w=880&h=880&q=100"
-          alt=""
-        />
-      </a>
     </div>
   </aside>
 </template>

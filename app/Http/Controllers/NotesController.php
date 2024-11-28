@@ -24,7 +24,8 @@ class NotesController extends Controller
     public function store(Request $request)
     {
         $data = [
-            'title' => $request->title
+            'title' => $request->title,
+            'due_date' => $request->due_date,
         ];
 
         Task::create($data);

@@ -1,4 +1,34 @@
 <script setup>
+import axios from "axios";
+import { ref } from "vue";
+
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const isLoading = ref(false); 
+
+const login = async () => {
+  isLoading.value = true;
+
+  try {
+    const response = await axios.post("/authenticate", {
+      email: email.value,
+      password: password.value,
+    });
+
+    if (response.data.redirect) {
+      // Redirect using window.location
+      window.location.href = response.data.redirect;
+    }
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      errorMessage.value = error.response.data.message; // Display error message
+      isLoading.value = false;
+    } else {
+      errorMessage.value = "An unexpected error occurred.";
+    }
+  }
+};
 </script>
 
 <template>
@@ -6,7 +36,7 @@
     <div
       class="container flex items-center justify-center min-h-screen px-6 mx-auto"
     >
-      <form class="w-full max-w-md">
+      <form @submit.prevent="login" class="w-full max-w-md">
         <img
           class="w-auto h-7 sm:h-8"
           src="https://merakiui.com/images/logo.svg"
@@ -18,7 +48,9 @@
         >
           sign In
         </h1>
-
+        <div role="alert" class="alert alert-error my-3 text-white" v-if="errorMessage">
+          <span>{{ errorMessage }}</span>
+        </div>
         <div class="relative flex items-center mt-8">
           <span class="absolute">
             <svg
@@ -41,6 +73,8 @@
             type="email"
             class="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
             placeholder="Email address"
+            name="email"
+            v-model="email"
           />
         </div>
 
@@ -66,16 +100,19 @@
             type="password"
             class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
             placeholder="Password"
+            name="password"
+            v-model="password"
           />
         </div>
 
         <div class="mt-6">
           <button
+            :disabled="isLoading"
             class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
           >
-            Sign in
+           <span v-if="isLoading">Loading...</span>
+           <span v-else>Login</span>
           </button>
-          
 
           <div class="mt-6 text-center">
             <a

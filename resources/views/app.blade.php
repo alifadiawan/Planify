@@ -18,5 +18,7 @@
 <body class="bg-base-100 text-white">
     @inertia
 </body>
-
+<script>
+    window.AuthUser = @json(Auth::user());
+</script>
 </html>

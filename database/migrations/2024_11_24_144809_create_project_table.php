@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             // $table->foreignId('user_id')->references('id')->on('users');
             $table->string('project_title');
+            $table->date('due_date');
             $table->timestamps();
         });
     }

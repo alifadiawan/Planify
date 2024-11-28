@@ -23,6 +23,7 @@ class ProjectController extends Controller
     {
         $data = [
             'project_title' => $request->project_title,
+            'due_date' => $request->due_date,
             // 'user_id' => Auth::user()->id
         ];
 
